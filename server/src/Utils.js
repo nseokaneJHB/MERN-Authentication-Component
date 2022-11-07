@@ -12,10 +12,10 @@ const responseWithData = (response, status, user) => {
 		role: null,
 		createdAt: new Date(user._doc.createdAt).toDateString(),
 		updatedAt: new Date(user._doc.updatedAt).toDateString(),
-	})
+	});
 };
 
 module.exports = {
 	convertToTitleCase,
-    responseWithData
+	responseWithData,
 };

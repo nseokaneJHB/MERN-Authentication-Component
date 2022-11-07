@@ -34,7 +34,10 @@ app.use(
 );
 app.use(cookieParser());
 app.use((request, response, next) => {
-	response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+	response.setHeader(
+		"Access-Control-Allow-Headers",
+		"Content-Type, Authorization"
+	);
 	next();
 });
 app.use(cors(corsOptions));
