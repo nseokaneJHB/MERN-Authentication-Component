@@ -47,16 +47,15 @@ const isAuthenticated = async (request, response, next) => {
 	try {
 		const user = await UserModel.findById(decodedToken.userId).exec();
 		if (!user) {
-			if (!user) {
-				request.ACD.isAuth = false; // ACD - Authentication Component Details
-				return next();
-			}
+			request.ACD.isAuth = false; // ACD - Authentication Component Details
+			return next();
 		}
 
 		request.ACD = {
 			// ACD - Authentication Component Details
 			isAuth: true,
 			userId: decodedToken.userId,
+			active: user.active,
 		};
 
 		next();

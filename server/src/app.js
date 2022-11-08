@@ -47,12 +47,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // Endpoints
 app.get("/api/", apiServices.endPoints);
-app.post("/api/sign-up/", apiServices.signUp);
-app.post("/api/sign-in/", apiServices.signIn);
-app.post("/api/sign-out/", apiServices.signOut);
+app.post("/api/sign/up/", apiServices.signUp);
+app.post("/api/sign/in/", apiServices.signIn);
+app.post("/api/sign/out/", apiServices.signOut);
 app.get("/api/settings/", apiServices.getProfile);
 app.put("/api/settings/", apiServices.updateProfile);
-app.put("/api/password/change/", apiServices.changePassword);
+app.put("/api/settings/change-password/", apiServices.changePassword);
 
 // Other Middleware
 app.use(handleError);

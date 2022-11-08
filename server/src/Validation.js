@@ -1,3 +1,10 @@
+// Third Party Middleware And Libraries
+const bcrypt = require("bcrypt");
+
+// Imports
+const UserModel = require("./UserModel");
+const { throwError } = require("./Utils");
+
 const validateName = (name) => {
 	const regex = /^[a-zA-Z ]+$/;
 	if (name.match(regex)) {
@@ -26,8 +33,65 @@ const validatePassword = (password) => {
 	}
 };
 
+// Get User Details
+const getUserById = async (isAuth, id, next) => {
+	try {
+		if (!isAuth)
+			throw throwError(
+				[{ key: "authentication", message: "Unauthorized Access" }],
+				401
+			);
+		const user = await UserModel.findById(id).exec();
+		if (!user)
+			throw throwError([{ key: "user", message: "User not found" }], 404);
+
+		return user;
+	} catch (error) {
+		next(error);
+	}
+};
+
+// Check if Name, Email and Password are valid
+const checkNameEmailAndPassword = (name, email, password) => {
+	let errors = [];
+
+	if (name === undefined || (name != null && !validateName(name))) {
+		errors.push({ key: "name", message: "Please enter a valid name" });
+	}
+
+	if (email != null && !validateEmail(email)) {
+		errors.push({
+			key: "email",
+			message: "Please enter a valid email address",
+		});
+	}
+
+	if (password != null && !validatePassword(password)) {
+		errors.push({
+			key: "password",
+			message:
+				"Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, one special character, and be 8 to 15 characters",
+		});
+	}
+
+	if (errors.length > 0) throw throwError(errors, 400);
+
+	return true;
+};
+
+// Check if password is correct
+const checkPassword = (password, db_password) => {
+	const match = bcrypt.compareSync(password, db_password);
+	if (!match)
+		throw throwError([{ key: "password", message: "Incorrect password" }], 404);
+	return;
+};
+
 module.exports = {
 	validateName,
 	validateEmail,
 	validatePassword,
+	getUserById,
+	checkNameEmailAndPassword,
+	checkPassword,
 };

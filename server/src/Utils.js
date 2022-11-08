@@ -1,3 +1,6 @@
+// Third Party Middleware And Libraries
+const bcrypt = require("bcrypt");
+
 const convertToTitleCase = (str) => {
 	return str
 		.split(" ")
@@ -15,7 +18,28 @@ const responseWithData = (response, status, user) => {
 	});
 };
 
+const throwError = (errors, code) => {
+	return {
+		errors: errors,
+		statusCode: code,
+	};
+};
+
+// Hash Password
+const hashPassword = (password) => {
+	return bcrypt.hashSync(password, 10);
+};
+
+// Save User
+const saveUser = async (response, user) => {
+	const new_user = await user.save();
+	return responseWithData(response, 201, new_user);
+};
+
 module.exports = {
 	convertToTitleCase,
 	responseWithData,
+	throwError,
+	hashPassword,
+	saveUser,
 };
