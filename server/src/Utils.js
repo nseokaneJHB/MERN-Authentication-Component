@@ -8,8 +8,8 @@ const convertToTitleCase = (str) => {
 		.join(" ");
 };
 
-const responseWithData = (response, status, user) => {
-	return response.status(status).json({
+const responseWithData = (response, user) => {
+	return response.json({
 		...user._doc,
 		password: null,
 		role: null,

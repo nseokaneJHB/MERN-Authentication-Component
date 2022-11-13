@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+* {
+  scroll-behavior: smooth;
+  font-family: monospace;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}/*# sourceMappingURL=index.css.map */

@@ -36,15 +36,9 @@ const validatePassword = (password) => {
 // Get User Details
 const getUserById = async (isAuth, id, next) => {
 	try {
-		if (!isAuth)
-			throw throwError(
-				[{ key: "authentication", message: "Unauthorized Access" }],
-				401
-			);
+		if (!isAuth) throw new Error("Unauthorized Access");
 		const user = await UserModel.findById(id).exec();
-		if (!user)
-			throw throwError([{ key: "user", message: "User not found" }], 404);
-
+		if (!user) throw new Error("User not found");
 		return user;
 	} catch (error) {
 		next(error);
@@ -81,9 +75,9 @@ const checkNameEmailAndPassword = (name, email, password) => {
 
 // Check if password is correct
 const checkPassword = (password, db_password) => {
+	if (!password) throw new Error("Password is required");
 	const match = bcrypt.compareSync(password, db_password);
-	if (!match)
-		throw throwError([{ key: "password", message: "Incorrect password" }], 404);
+	if (!match) throw new Error("Incorrect password");
 	return;
 };
 

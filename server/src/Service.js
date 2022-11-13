@@ -44,7 +44,7 @@ const endPoints = (request, response) => {
 			Body: "N/A",
 			Response: "{}",
 		},
-		SETTINGS: {
+		"SETTINGS": {
 			Endpoint: "/settings/",
 			Description: "Read, Update, Deactivate profile",
 			Methods: "[GET, PUT]",
@@ -58,6 +58,20 @@ const endPoints = (request, response) => {
 			Body: "[old_password, new_password]",
 			Response: "{}",
 		},
+		"GET USERS": {
+			Endpoint: "/users/",
+			Description: "Get all users by the admin",
+			Methods: "[GET]",
+			Body: "N/A",
+			Response: "{}",
+		},
+		"USER": {
+			Endpoint: "/users/:id>/",
+			Description: "Get or delete user by the admin",
+			Methods: "[GET, DELETE]",
+			Body: "N/A",
+			Response: "{}",
+		}
 	};
 
 	response.json(URLS);
@@ -66,8 +80,12 @@ const endPoints = (request, response) => {
 // Get Profile
 const getProfile = async (request, response, next) => {
 	const { isAuth, userId } = await request.ACD;
-	const user = await getUserById(isAuth, userId, next);
-	return responseWithData(response, 201, user);
+	try {
+		const user = await getUserById(isAuth, userId, next);
+		return responseWithData(response, user);
+	} catch (error) {
+		return next()
+	}
 };
 
 // Sign Up
@@ -111,11 +129,7 @@ const signIn = async (request, response, next) => {
 
 	try {
 		const user = await UserModel.findOne({ email }).exec();
-		if (!user)
-			throw throwError(
-				[{ key: "email", message: "Invalid email or password" }],
-				404
-			);
+		if (!user) throw new Error("Invalid email or password");
 
 		checkPassword(password, user.password);
 
@@ -204,6 +218,63 @@ const changePassword = async (request, response, next) => {
 	}
 };
 
+// Get All Users
+const getAllUsers = async (request, response, next) => {
+	const { isAuth, userId } = await request.ACD;
+	try {
+		const me = await getUserById(isAuth, userId, next);
+		if (me.role !== "ADMIN") throw new Error("Unauthorized access")
+		const users = (await UserModel.find({}).exec()).filter((user) => user.id !== me.id)
+		return response.json(users.map((user) => {
+			return {
+				...user._doc,
+				password: null,
+				role: null,
+				createdAt: new Date(user._doc.createdAt).toDateString(),
+				updatedAt: new Date(user._doc.updatedAt).toDateString(),
+			}
+		}))
+	} catch (error) {
+		next(error)
+	}
+}
+
+// Get One User
+const getOneUser = async (request, response, next) => {
+	const { isAuth, userId } = await request.ACD;
+	try {
+		const me = await getUserById(isAuth, userId, next);
+		if (me.role !== "ADMIN") throw new Error("Unauthorized access")
+		try {
+			const user = await getUserById(isAuth, request.params.userId, next);
+			return user ? responseWithData(response, user) : next()
+		} catch (error) {
+			next(error)
+		}
+	} catch (error) {
+		next(error)
+	}
+}
+
+// Delete User
+const deleteUser = async (request, response, next) => {
+	const { isAuth, userId } = await request.ACD;
+	try {
+		const me = await getUserById(isAuth, userId, next);
+		if (me.role !== "ADMIN") throw new Error("Unauthorized access")
+		try {
+			const user = await getUserById(isAuth, request.params.userId, next);
+			const name = user.name
+			user.delete()
+			return response.json(`User ${name} deleted`)
+		} catch (error) {
+			next(error)
+		}
+	} catch (error) {
+		next(error)
+	}
+}
+
 module.exports = {
 	endPoints,
 	signUp,
@@ -212,4 +283,7 @@ module.exports = {
 	getProfile,
 	updateProfile,
 	changePassword,
+	getAllUsers,
+	getOneUser,
+	deleteUser,
 };

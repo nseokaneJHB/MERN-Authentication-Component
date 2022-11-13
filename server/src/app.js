@@ -36,7 +36,7 @@ app.use(cookieParser());
 app.use((request, response, next) => {
 	response.setHeader(
 		"Access-Control-Allow-Headers",
-		"Content-Type, Authorization"
+		"Content-Type"
 	);
 	next();
 });
@@ -47,12 +47,15 @@ app.use(express.urlencoded({ extended: true }));
 
 // Endpoints
 app.get("/api/", apiServices.endPoints);
-app.post("/api/sign/up/", apiServices.signUp);
-app.post("/api/sign/in/", apiServices.signIn);
-app.post("/api/sign/out/", apiServices.signOut);
+app.post("/api/auth/sign-up/", apiServices.signUp);
+app.post("/api/auth/sign-in/", apiServices.signIn);
+app.post("/api/auth/sign-out/", apiServices.signOut);
 app.get("/api/settings/", apiServices.getProfile);
 app.put("/api/settings/", apiServices.updateProfile);
 app.put("/api/settings/change-password/", apiServices.changePassword);
+app.get("/api/users/", apiServices.getAllUsers);
+app.get("/api/users/:userId", apiServices.getOneUser);
+app.delete("/api/users/:userId", apiServices.deleteUser);
 
 // Other Middleware
 app.use(handleError);
