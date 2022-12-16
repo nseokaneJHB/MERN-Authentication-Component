@@ -1,8 +1,8 @@
 const { Schema, model } = require("mongoose");
 
 const EROLES = {
-	ADMIN: "ADMIN",
-	USER: "USER",
+	ADMIN: "A",
+	USER: "U",
 };
 
 const UserSchema = new Schema(
@@ -38,7 +38,32 @@ const UserSchema = new Schema(
 			enum: EROLES,
 			default: EROLES.USER,
 		},
-		// avatar: {}
+		thumbnail: {
+			fieldname: {
+				type: String,
+			},
+			originalname: {
+				type: String,
+			},
+			encoding: {
+				type: String,
+			},
+			mimetype: {
+				type: String,
+			},
+			destination: {
+				type: String,
+			},
+			filename: {
+				type: String,
+			},
+			path: {
+				type: String,
+			},
+			size: {
+				type: Number,
+			},
+		}
 	},
 	{
 		timestamps: true,

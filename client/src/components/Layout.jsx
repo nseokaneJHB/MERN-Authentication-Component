@@ -1,11 +1,11 @@
 // Components
-import { Navigation } from "./Navigation"
+import { Navigation } from "./Navigation";
 
 export const Layout = ({ children }) => {
-  return (
-	<main className="h-screen">
-		<Navigation />
-		{ children }
-	</main>
-  )
-}
+	return (
+		<main className="h-screen">
+			<Navigation />
+			{children}
+		</main>
+	);
+};

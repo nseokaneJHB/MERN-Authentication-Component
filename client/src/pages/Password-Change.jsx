@@ -1,13 +1,12 @@
 import { useState } from "react";
 
 // Third Party
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
 
 // Icons
 import {
-	UserIcon,
-	AtSymbolIcon,
+	KeyIcon,
 	LockClosedIcon,
 	LockOpenIcon,
 } from "@heroicons/react/24/solid";
@@ -19,13 +18,12 @@ import { handleClosePopup } from "../utils/functionalities";
 // Components
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { SocialsAuthentication } from "../components/Socials-Authentication";
 import { PopupMessage } from "../components/PopupMessage";
 
 // API Calls
-import { signUpApiCall } from "../utils/services";
+import { passwordChangeApiCall } from "../utils/services";
 
-export const SignUp = () => {
+export const PasswordChange = () => {
 	const navigate = useNavigate();
 
 	const [showErrors, setShowErrors] = useState(false);
@@ -37,32 +35,28 @@ export const SignUp = () => {
 	const [showSuccess, setShowSuccess] = useState(false);
 	const [successMessage, setSuccessMessage] = useState("");
 
-	const [userCredentials, setUserCredentials] = useState({
-		name: "",
-		email: "",
-		password: "",
+	const [userPasswords, setUserPasswords] = useState({
+		current_password: "",
+		new_password: "",
 		confirm_password: "",
 	});
 
-	// Handle the changing of inputs
 	const handleInputChange = (event) => {
 		const { name, value } = event.target;
 		setErrors({ ...errors, [name]: "" });
 		setShowError(false);
-		setUserCredentials({ ...userCredentials, [name]: value });
+		setUserPasswords({ ...userPasswords, [name]: value });
 	};
 
-	// Submit form data api call
-	const { mutate: mutateSignUp } = useMutation({
-		mutationFn: async (data) => await signUpApiCall(data),
-		onSuccess: async (data) => {
-			setUserCredentials({
-				name: "",
-				email: "",
-				password: "",
+	const { mutate: mutatePasswordChange } = useMutation({
+		mutationFn: async (data) => await passwordChangeApiCall(data),
+		onSuccess: async (response) => {
+			setUserPasswords({
+				current_password: "",
+				new_password: "",
 				confirm_password: "",
 			});
-			setSuccessMessage(await data.message);
+			setSuccessMessage(await response.message);
 			setShowSuccess(true);
 			setTimeout(() => {
 				setShowSuccess(false);
@@ -73,7 +67,7 @@ export const SignUp = () => {
 			const { errors, message } = await error.response.data;
 
 			if (errors) {
-				setErrors(await error.response.data.errors);
+				setErrors(errors);
 				setShowErrors(true);
 			} else if (message) {
 				setErrorMessage(message);
@@ -82,16 +76,14 @@ export const SignUp = () => {
 					setShowError(false);
 				}, 3000);
 			} else {
-				console.log(await error.response.data);
+				console.log(await error.response);
 			}
 		},
 	});
 
-	// Handle submitting of data
-	const handleSignUp = (event) => {
-		// Add loader here...
+	const handlePasswordChange = (event) => {
 		event.preventDefault();
-		if (!userCredentials.confirm_password.match(userCredentials.password)) {
+		if (!userPasswords.confirm_password.match(userPasswords.new_password)) {
 			setErrors({
 				...errors,
 				confirm_password: "Confirm password doesn't match your password",
@@ -99,14 +91,15 @@ export const SignUp = () => {
 			setShowErrors(true);
 			return false;
 		} else {
-			mutateSignUp(userCredentials);
+			const { new_password, current_password } = userPasswords
+			mutatePasswordChange({ current_password, new_password });
 		}
 	};
 
 	return (
-		<form className="grid grid-cols-1 md:grid-cols-2 place-items-center border" style={{ minHeight: "95%" }}>
-			<div className="w-full p-4 sm:px-6 lg:px-10 xl:w-4/6">
-				<h1 className="text-4xl font-bold text-center text-gray-600">Sign Up</h1>
+		<form className="h-full grid grid-cols-1 sm:place-items-center">
+			<div className="w-full p-4 sm:px-6 lg:px-10 max-w-xl">
+				<h1 className="text-4xl font-bold text-center">Change Password</h1>
 				<PopupMessage
 					pType={"success"}
 					pShow={showSuccess}
@@ -120,69 +113,50 @@ export const SignUp = () => {
 					pMessage={errorMessage}
 				/>
 				<Input
-					iLabel={"Name"}
-					iIcon={<UserIcon className={DefaultIconStyles} />}
-					iType={"text"}
-					iName={"name"}
-					iPlaceholder={"Your name..."}
-					iValue={userCredentials.name}
-					handleOnChange={handleInputChange}
-				/>
-				{errors?.name ? (
-					<PopupMessage
-						pType={"error"}
-						pShow={showErrors}
-						pClose={() => handleClosePopup(setShowErrors, setErrors)}
-						pMessage={errors?.name}
-					/>
-				) : (
-					<></>
-				)}
-				<Input
-					iLabel={"Email Address"}
-					iIcon={<AtSymbolIcon className={DefaultIconStyles} />}
-					iType={"text"}
-					iName={"email"}
-					iPlaceholder={"Your email address..."}
-					iValue={userCredentials.email}
-					handleOnChange={handleInputChange}
-				/>
-				{errors?.email ? (
-					<PopupMessage
-						pType={"error"}
-						pShow={showErrors}
-						pClose={() => handleClosePopup(setShowErrors, setErrors)}
-						pMessage={errors?.email}
-					/>
-				) : (
-					<></>
-				)}
-				<Input
-					iLabel={"Password"}
+					iLabel={"Current Password"}
 					iIcon={<LockClosedIcon className={DefaultIconStyles} />}
 					iType={"password"}
-					iName={"password"}
-					iPlaceholder={"Your password..."}
-					iValue={userCredentials.password}
+					iName={"current_password"}
+					iPlaceholder={"Your current password..."}
+					iValue={userPasswords.current_password}
 					handleOnChange={handleInputChange}
 				/>
-				{errors?.password ? (
+				{errors?.current_password ? (
 					<PopupMessage
 						pType={"error"}
 						pShow={showErrors}
 						pClose={() => handleClosePopup(setShowErrors, setErrors)}
-						pMessage={errors?.password}
+						pMessage={errors?.current_password}
 					/>
 				) : (
 					<></>
 				)}
 				<Input
-					iLabel={"Confirm Password"}
+					iLabel={"New Password"}
+					iIcon={<KeyIcon className={DefaultIconStyles} />}
+					iType={"password"}
+					iName={"new_password"}
+					iPlaceholder={"Your new password..."}
+					iValue={userPasswords.new_password}
+					handleOnChange={handleInputChange}
+				/>
+				{errors?.new_password ? (
+					<PopupMessage
+						pType={"error"}
+						pShow={showErrors}
+						pClose={() => handleClosePopup(setShowErrors, setErrors)}
+						pMessage={errors?.new_password}
+					/>
+				) : (
+					<></>
+				)}
+				<Input
+					iLabel={"Confirm New Password"}
 					iIcon={<LockOpenIcon className={DefaultIconStyles} />}
 					iType={"password"}
 					iName={"confirm_password"}
-					iPlaceholder={"Confirm your password..."}
-					iValue={userCredentials.confirm_password}
+					iPlaceholder={"Confirm your new password..."}
+					iValue={userPasswords.confirm_password}
 					handleOnChange={handleInputChange}
 				/>
 				{errors?.confirm_password ? (
@@ -195,26 +169,23 @@ export const SignUp = () => {
 				) : (
 					<></>
 				)}
-				<p className="text-xs text-center text-gray-600 mt-3">
-					Already have an account?{" "}
-					<Link
-						className="text-blue-500 hover:opacity-75"
-						to={"/sign-in"}
-					>
-					Sign in
-					</Link>
-				</p>
 				<Button
 					bStyles={
 						"bg-blue-400 hover:bg-blue-500 border-blue-500 hover:border-blue-500"
 					}
 					bType={"submit"}
-					bLabel={"Sign Up"}
-					handleOnClick={handleSignUp}
+					bLabel={"Change password"}
+					handleOnClick={handlePasswordChange}
 				/>
-				<SocialsAuthentication />
+				<Button
+					bStyles={
+						"bg-yellow-400 hover:bg-yellow-500 border-yellow-500 hover:border-yellow-500 text-black"
+					}
+					bType={"button"}
+					bLabel={"Cancel"}
+					handleOnClick={() => navigate(-1 || '/settings')}
+				/>
 			</div>
-			<div className="hidden md:block h-full w-full bg-blue-400 p-4 sm:px-6 lg:px-10"></div>
 		</form>
 	);
 };
