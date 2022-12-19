@@ -12,9 +12,20 @@
 
 This is a `MERN Stack component` which one can integrate into their system without a problem. You just need to do some configurations then you are good to go.
 
-## ***Docker Setup***
-1. Clone this project and go into the project directory using your terminal
-2. Run `docker compose up`
+## ***Features***
+- Email and Password Authentication
+- Update Profile Information:
+   * Name
+   * Password
+   * Account Status
+   * Profile Picture
+   * Email - `Coming soon`
+- Reset Password
+- Delete Account
+- Google Authentication - `Coming soon`
+- Facebook Authentication - `Coming soon`
+- Instagram Authentication - `Coming soon`
+- Twitter Authentication - `Coming soon`
 
 ## ***Local Setup***
 
@@ -22,7 +33,9 @@ This is a `MERN Stack component` which one can integrate into their system witho
 2. Configure the backend [Server](./server/README.md)
 3. Configure the frontend [Client](./client/README.md)
 
+## ***Docker Setup*** - `Coming soon`
+
 ## ***Contribution***
-You can contribute by following these simple [steps](./contribute-guidlines.md)
+You can contribute by following these simple [guidelines](./.github/contribute_guidlines.md).
 
 By *`Nolan Seokane`* from the *`08th November 2022`*

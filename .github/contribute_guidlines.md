@@ -1,6 +1,4 @@
-# ***Authentication Component Contribution***
-
-# **Contribution Guidlines**
+# ***Authentication Component Contribution Guidelines***
 
 Your contributions are always welcome!
 
@@ -21,4 +19,4 @@ Your contributions are always welcome!
 - Use prettier to format your code
 - Use `space 2` as your code indentation
 
-_You do not know how to contribute? Worry not, follow these simple [steps or tutorials](/github/contribute_steps.md.md)_
+_You do not know how to contribute? Worry not, follow these simple [steps or tutorials](/.github/contribute_steps.md)_
