@@ -28,7 +28,7 @@ const getUserById = async (response, userId) => {
 };
 
 // Get Profile
-const getme = async (request, response, next) => {
+const getMe = async (request, response, next) => {
 	const { userId } = request.user;
 	const user = await getUserById(response, userId);
 	return await successResponse(
@@ -41,7 +41,7 @@ const getme = async (request, response, next) => {
 };
 
 // Update Profile
-const updateme = async (request, response, next) => {
+const updateMe = async (request, response, next) => {
 	const { userId } = request.user;
 	const user = await getUserById(response, userId);
 
@@ -94,7 +94,19 @@ const updateme = async (request, response, next) => {
 };
 
 // Delete Profile
-const deleteme = async (request, response, next) => {};
+const deleteMe = async (request, response, next) => {
+	console.log(request.body);
+	return response.status(200).json({
+		message: "Deleting my account..."
+	})
+};
+
+// Change email address
+const changeEmail = async (request, response, next) => {
+	return response.status(200).json({
+		message: "Changing email address..."
+	})
+}
 
 // Change password
 const changePassword = async (request, response, next) => {
@@ -151,8 +163,9 @@ const changePassword = async (request, response, next) => {
 
 module.exports = {
 	getUserById,
-	getme,
-	updateme,
-	deleteme,
+	getMe,
+	updateMe,
+	deleteMe,
+	changeEmail,
 	changePassword,
 };

@@ -3,8 +3,8 @@ import { useState } from "react";
 // Third Party
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import moment from 'moment';
-import { useDispatch } from 'react-redux'
+import moment from "moment";
+import { useDispatch } from "react-redux";
 
 // Icons
 import {
@@ -29,7 +29,7 @@ import { getMeApiCall, updateMeApiCall } from "../utils/services";
 import { authActions } from "../store/authSlice";
 
 export const Settings = () => {
-	const dispatch = useDispatch()
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
@@ -66,53 +66,54 @@ export const Settings = () => {
 			onSuccess: async (response) => {
 				const { data } = await response;
 				setUserDetails({ ...userDetails, ...data, password: "" });
-				dispatch(authActions.login(data))
+				dispatch(authActions.login(data));
 			},
 			onError: async (error) => {
 				const { message } = await error.response.data;
 				setErrorMessage(message);
 				setShowError(true);
-				dispatch(authActions.logout())
+				dispatch(authActions.logout());
 				navigate("/sign-in", { replace: true });
 			},
 			refetchOnWindowFocus: false,
 		}
 	);
 
-	const { status: updateProfileStatus, mutate: mutateUpdateProfile } = useMutation({
-		mutationFn: async (payload) => await updateMeApiCall(payload),
-		onSuccess: async (response) => {
-			queryClient.setQueryData(["userProfileData"], (data) => {
-				return data.data;
-			});
-			const { message } = await response;
-			setShowSuccess(true);
-			setSuccessMessage(message);
-			setTimeout(() => {
-				setShowSuccess(false);
-			}, 2000);
-		},
-		onError: async (error) => {
-			const { errors, message } = error.response.data
-			
-			if (errors) {
-				setErrors(await error.response.data.errors);
-				setShowErrors(true);
-			} else if (message) {
-				setErrorMessage(message);
-				if (message === "Unauthorized access") {
-					dispatch(authActions.logout())
-					navigate("/sign-in", { replace: true });
-				}
-				setShowError(true);
+	const { status: updateProfileStatus, mutate: mutateUpdateProfile } =
+		useMutation({
+			mutationFn: async (payload) => await updateMeApiCall(payload),
+			onSuccess: async (response) => {
+				queryClient.setQueryData(["userProfileData"], (data) => {
+					return data.data;
+				});
+				const { message } = await response;
+				setShowSuccess(true);
+				setSuccessMessage(message);
 				setTimeout(() => {
-					setShowError(false);
-				}, 3000);
-			} else {
-				console.log(await error.response.data);
-			}
-		},
-	});
+					setShowSuccess(false);
+				}, 2000);
+			},
+			onError: async (error) => {
+				const { errors, message } = error.response.data;
+
+				if (errors) {
+					setErrors(await error.response.data.errors);
+					setShowErrors(true);
+				} else if (message) {
+					setErrorMessage(message);
+					if (message === "Unauthorized access") {
+						dispatch(authActions.logout());
+						navigate("/sign-in", { replace: true });
+					}
+					setShowError(true);
+					setTimeout(() => {
+						setShowError(false);
+					}, 3000);
+				} else {
+					console.log(await error.response.data);
+				}
+			},
+		});
 
 	const handleUpdateProfile = (event) => {
 		event.preventDefault();
@@ -120,24 +121,39 @@ export const Settings = () => {
 	};
 
 	return (
-		<form className="grid grid-cols-1 place-items-center" style={{ minHeight: "95%" }}>
+		<form
+			className="grid grid-cols-1 place-items-center"
+			style={{ minHeight: "95%" }}
+		>
 			<div className="w-full p-4 sm:px-6 lg:px-10 max-w-xl">
 				<h1 className="text-4xl font-bold text-center text-gray-600">
 					Update Profile Details
 				</h1>
 				<div className="my-3">
-					{
-						userDetails?.thumbnail
-						?
+					{userDetails?.thumbnail ? (
 						<picture>
-							<img className="rounded-full mx-auto h-[6rem] w-[6rem] before:content-none before:rounded-full" src={`http://localhost:8000/${userDetails?.thumbnail}`} alt={userDetails?.name} />
+							<img
+								className="rounded-full mx-auto h-[6rem] w-[6rem] before:content-none before:rounded-full"
+								src={`${process.env.REACT_APP_API_URL}/${userDetails?.thumbnail}`}
+								alt={userDetails?.name}
+							/>
 						</picture>
-						:
-						<UserIcon className={`text-blue-500 hover:text-blue-600 mx-auto h-[6rem] w-[6rem] rounded-full border`} />
-					}
+					) : (
+						<UserIcon
+							className={`text-blue-500 hover:text-blue-600 mx-auto h-[6rem] w-[6rem] rounded-full border`}
+						/>
+					)}
 					<div className="my-3 flex justify-between">
-						<small className="text-gray-500">Joined: {moment(new Date()).diff(moment(userDetails.createdAt), 'days')} day(s) ago</small>
-						<small className="text-gray-500">Updated: {moment(new Date()).diff(moment(userDetails.updatedAt), 'days')} day(s) ago</small>
+						<small className="text-gray-500">
+							Joined:{" "}
+							{moment(new Date()).diff(moment(userDetails.createdAt), "days")}{" "}
+							day(s) ago
+						</small>
+						<small className="text-gray-500">
+							Updated:{" "}
+							{moment(new Date()).diff(moment(userDetails.updatedAt), "days")}{" "}
+							day(s) ago
+						</small>
 					</div>
 				</div>
 				<PopupMessage
@@ -149,11 +165,15 @@ export const Settings = () => {
 				<PopupMessage
 					pType={"error"}
 					pShow={showError}
-					pClose={() =>handleClosePopup(setShowError, setErrorMessage)}
+					pClose={() => handleClosePopup(setShowError, setErrorMessage)}
 					pMessage={errorMessage}
 				/>
 				<Input
-					iDisabled={profileStatus === "loading" || updateProfileStatus === "loading" ? true : false}
+					iDisabled={
+						profileStatus === "loading" || updateProfileStatus === "loading"
+							? true
+							: false
+					}
 					iLabel={"Name"}
 					iIcon={<UserIcon className={DefaultIconStyles} />}
 					iType={"text"}
@@ -173,7 +193,11 @@ export const Settings = () => {
 					<></>
 				)}
 				<Input
-					iDisabled={profileStatus === "loading" || updateProfileStatus === "loading" ? true : false}
+					iDisabled={
+						profileStatus === "loading" || updateProfileStatus === "loading"
+							? true
+							: false
+					}
 					iLabel={"Email Address"}
 					iIcon={<AtSymbolIcon className={DefaultIconStyles} />}
 					iType={"text"}
@@ -193,15 +217,22 @@ export const Settings = () => {
 					<></>
 				)}
 				<Input
-					iDisabled={profileStatus === "loading" || updateProfileStatus === "loading" ? true : false}
+					iDisabled={
+						profileStatus === "loading" || updateProfileStatus === "loading"
+							? true
+							: false
+					}
 					iLabel={"Profile Image"}
 					iType={"file"}
 					iName={"thumbnail"}
 					iPlaceholder={"Your email address..."}
-					handleOnChange={(event) => setUserDetails({ ...userDetails, thumbnail: event.target.files[0] })}
+					handleOnChange={(event) =>
+						setUserDetails({ ...userDetails, thumbnail: event.target.files[0] })
+					}
 				/>
-				<div className="flex justify-center gap-3">
+				<div className="flex justify-center gap-3 hover:cursor-pointer">
 					<input
+          className="hover:cursor-pointer"
 						type="checkbox"
 						checked={userDetails.active}
 						id="active"
@@ -214,16 +245,16 @@ export const Settings = () => {
 						}
 						value={userDetails.active}
 					/>
-					<label htmlFor="active" className="text-gray-600">
-						Your account is currently{" "}
+					<label htmlFor="active" className="text-gray-600 hover:cursor-pointer">
+						Your account will be{" "}
 						{userDetails.active ? "active" : "inactive"}. Do you want to{" "}
 						{userDetails.active ? "deactivate" : "activate"}?
 					</label>
 				</div>
 				{!userDetails.active ? (
-					<p className="mt-2 italic text-gray-600">
-						<strong>NB:</strong> By unchecking the checkbox you are deactivating
-						your account you will be kicked out of the system.
+					<p className="mt-2 italic text-rose-400">
+						<strong>NB:</strong> By leaving the checkbox unchecking you are deactivating
+						your account and you will be kicked out of the system.
 						<br />
 						<br />
 						You'll have to sign in again to re-activate your account.
@@ -232,7 +263,11 @@ export const Settings = () => {
 					<></>
 				)}
 				<Input
-					iDisabled={profileStatus === "loading" || updateProfileStatus === "loading" ? true : false}
+					iDisabled={
+						profileStatus === "loading" || updateProfileStatus === "loading"
+							? true
+							: false
+					}
 					iLabel={"Password"}
 					iIcon={<LockClosedIcon className={DefaultIconStyles} />}
 					iType={"password"}
@@ -253,10 +288,14 @@ export const Settings = () => {
 					<></>
 				)}
 				<p className="mt-2 italic text-gray-600">
-					<strong>NB:</strong> Password is required to update your information.
+					<strong>NB:</strong> Password is required to update your profile.
 				</p>
 				<Button
-					bDisabled={profileStatus === "loading" || updateProfileStatus === "loading" ? true : false}
+					bDisabled={
+						profileStatus === "loading" || updateProfileStatus === "loading"
+							? true
+							: false
+					}
 					bStyles={
 						"bg-blue-400 hover:bg-blue-500 border-blue-500 hover:border-blue-500"
 					}
@@ -265,14 +304,25 @@ export const Settings = () => {
 					handleOnClick={handleUpdateProfile}
 				/>
 				<p className="text-center text-gray-600">
-					Do you want to{" "}
+          Change{" "}
 					<Link
 						className="text-blue-500 hover:text-blue-600 visited:text-blue-400"
 						to={"/password-change"}
 					>
-						change
-					</Link>{" "}
-					your password?
+						password
+					</Link>,{" "}
+          <Link
+						className="text-blue-500 hover:text-blue-600 visited:text-blue-400"
+						to={"/password-change"}
+					>
+						email
+					</Link>{" "}Or{" "}
+					<Link
+						className="text-rose-500 hover:text-rose-600 visited:text-rose-400"
+						to={"/password-change"}
+					>
+						delete account.
+					</Link>
 				</p>
 			</div>
 		</form>

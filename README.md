@@ -6,7 +6,7 @@
 - [ExpressJS](https://expressjs.com/) - 4.18.2
 - [React](https://reactjs.org/docs/create-a-new-react-app.html) v8.1.0
 - [NodeJS](https://nodejs.org/en/) - v16.13.0
-- [Docker]() - v20.10.17
+- [Docker](https://docs.docker.com/get-docker/) - v20.10.17
 
 ## ***Description***
 
@@ -23,6 +23,6 @@ This is a `MERN Stack component` which one can integrate into their system witho
 3. Configure the frontend [Client](./client/README.md)
 
 ## ***Contribution***
-You can contribute by following these simple [steps](./contribute.md)
+You can contribute by following these simple [steps](./contribute-guidlines.md)
 
 By *`Nolan Seokane`* from the *`08th November 2022`*

@@ -61,7 +61,7 @@ export const Navigation = () => {
 										<Menu.Button className="flex rounded-full text-sm ring-1 focus:outline-none focus:ring-2 hover:ring-2">
 										  <img
 										    className="h-[2.6rem] w-[2.6rem] rounded-full"
-										    src={`http://localhost:8000/${user?.thumbnail}`}
+										    src={`${process.env.REACT_APP_API_URL}/${user?.thumbnail}`}
 										    alt={``}
 										  />
 										</Menu.Button>

@@ -78,7 +78,11 @@ export const SignIn = () => {
 					setShowError(false);
 				}, 3000);
 			} else {
-				console.log(await error.response.data);
+				setErrorMessage("Oops, something went wrong. Please try again later.");
+				setShowError(true);
+				setTimeout(() => {
+					setShowError(false);
+				}, 5000);
 			}
 		},
 	});

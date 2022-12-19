@@ -12,9 +12,10 @@ const { verifyToken } = require("../utils/middleware")
 const { handleImageData } = require("../utils/handleImage")
 
 // Endpoints
-router.get("/settings/", verifyToken, userController.getme)
-router.put("/settings/", verifyToken, handleImageData.single("thumbnail"), userController.updateme)
-router.delete("/settings/", verifyToken, userController.deleteme)
+router.get("/settings/", verifyToken, userController.getMe)
+router.put("/settings/", verifyToken, handleImageData.single("thumbnail"), userController.updateMe)
+router.delete("/settings/", verifyToken, userController.deleteMe)
+router.put("/change-email/", verifyToken, userController.changeEmail)
 router.put("/change-password/", verifyToken, userController.changePassword)
 
 module.exports = router
