@@ -16,6 +16,11 @@ export const PopupMessage = ({ pType, pShow, pClose, pMessage, pStyles }) => {
     iconStyles += "hover:text-green-600"
   }
 
+  if (pType === "warning") {
+    defaultWrapperStyles += " bg-yellow-200 border-yellow-500 text-yellow-700"
+    iconStyles += "hover:text-yellow-600"
+  }
+
 	return pShow ? (
     <div className={defaultWrapperStyles}>
       <p className="flex-none">

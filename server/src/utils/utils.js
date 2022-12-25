@@ -18,6 +18,7 @@ const reshapeUserData = async (user) => {
 		id: user._id,
 		name: user.name,
 		email: user.email,
+		verified: user.verified,
 		active: user.active,
 		thumbnail: user.thumbnail.filename,
 		createdAt: user.createdAt,

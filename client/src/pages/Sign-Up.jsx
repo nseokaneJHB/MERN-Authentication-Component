@@ -53,25 +53,26 @@ export const SignUp = () => {
 	};
 
 	// Submit form data api call
-	const { mutate: mutateSignUp } = useMutation({
+	const { status, mutate: mutateSignUp } = useMutation({
 		mutationFn: async (data) => await signUpApiCall(data),
 		onSuccess: async (data) => {
-			setUserCredentials({
-				name: "",
-				email: "",
-				password: "",
-				confirm_password: "",
-			});
-			setSuccessMessage(await data.message);
-			setShowSuccess(true);
-			setTimeout(() => {
-				setShowSuccess(false);
-				navigate("/sign-in");
-			}, 3000);
+			if (data.status === "success") {
+				setUserCredentials({
+					name: "",
+					email: "",
+					password: "",
+					confirm_password: "",
+				});
+				setSuccessMessage(await data.message);
+				setShowSuccess(true);
+				setTimeout(() => {
+					setShowSuccess(false);
+					navigate("/sign-in");
+				}, 3000);
+      }
 		},
 		onError: async (error) => {
 			const { errors, message } = await error.response.data;
-
 			if (errors) {
 				setErrors(await error.response.data.errors);
 				setShowErrors(true);
@@ -80,9 +81,14 @@ export const SignUp = () => {
 				setShowError(true);
 				setTimeout(() => {
 					setShowError(false);
-				}, 3000);
+				}, 5000);
 			} else {
-				console.log(await error.response.data);
+        console.log(error);
+				setErrorMessage(error.message);
+				setShowError(true);
+				setTimeout(() => {
+					setShowError(false);
+				}, 5000);
 			}
 		},
 	});
@@ -104,9 +110,14 @@ export const SignUp = () => {
 	};
 
 	return (
-		<form className="grid grid-cols-1 md:grid-cols-2 place-items-center border" style={{ minHeight: "95%" }}>
+		<form
+			className="grid grid-cols-1 md:grid-cols-2 place-items-center border"
+			style={{ minHeight: "95%" }}
+		>
 			<div className="w-full p-4 sm:px-6 lg:px-10 xl:w-4/6">
-				<h1 className="text-4xl font-bold text-center text-gray-600">Sign Up</h1>
+				<h1 className="text-4xl font-bold text-center text-gray-600">
+					Sign Up
+				</h1>
 				<PopupMessage
 					pType={"success"}
 					pShow={showSuccess}
@@ -120,6 +131,7 @@ export const SignUp = () => {
 					pMessage={errorMessage}
 				/>
 				<Input
+					iDisabled={status === "loading" ? true : false}
 					iLabel={"Name"}
 					iIcon={<UserIcon className={DefaultIconStyles} />}
 					iType={"text"}
@@ -139,6 +151,7 @@ export const SignUp = () => {
 					<></>
 				)}
 				<Input
+					iDisabled={status === "loading" ? true : false}
 					iLabel={"Email Address"}
 					iIcon={<AtSymbolIcon className={DefaultIconStyles} />}
 					iType={"text"}
@@ -158,6 +171,7 @@ export const SignUp = () => {
 					<></>
 				)}
 				<Input
+					iDisabled={status === "loading" ? true : false}
 					iLabel={"Password"}
 					iIcon={<LockClosedIcon className={DefaultIconStyles} />}
 					iType={"password"}
@@ -177,6 +191,7 @@ export const SignUp = () => {
 					<></>
 				)}
 				<Input
+					iDisabled={status === "loading" ? true : false}
 					iLabel={"Confirm Password"}
 					iIcon={<LockOpenIcon className={DefaultIconStyles} />}
 					iType={"password"}
@@ -197,14 +212,12 @@ export const SignUp = () => {
 				)}
 				<p className="text-xs text-center text-gray-600 mt-3">
 					Already have an account?{" "}
-					<Link
-						className="text-blue-500 hover:opacity-75"
-						to={"/sign-in"}
-					>
-					Sign in
+					<Link className="text-blue-500 hover:opacity-75" to={"/sign-in"}>
+						Sign in
 					</Link>
 				</p>
 				<Button
+					bDisabled={status === "loading" ? true : false}
 					bStyles={
 						"bg-blue-400 hover:bg-blue-500 border-blue-500 hover:border-blue-500"
 					}

@@ -17,10 +17,11 @@ import { Input } from "../components/Input";
 import { PopupMessage } from "../components/PopupMessage";
 
 // API Calls
-import { passwordResetVerifyTokenApiCall, passwordResetApiCall } from "../utils/services";
+import { verifyTokenApiCall, passwordResetApiCall } from "../utils/services";
 
 export const PasswordReset = () => {
 	const navigate = useNavigate();
+	const params = useParams()
 
 	const [showErrors, setShowErrors] = useState(false);
 	const [errors, setErrors] = useState(null);
@@ -36,12 +37,10 @@ export const PasswordReset = () => {
 		confirm_password: "",
 	});
 
-  const params = useParams()
-
 	const handleInputChange = (event) => {
     const { name, value } = event.target;
 		setShowErrors(false);
-    setErrors({ ...errors, [name]: "" });
+    	setErrors({ ...errors, [name]: "" });
 		setShowError(false);
 		setUserPasswords({ ...userPasswords, [name]: value });
 	};
@@ -49,7 +48,7 @@ export const PasswordReset = () => {
 	// Verify Token
 	const { status: verifyTokenLoading } = useQuery(
 		["verifytoken"],
-		async () => await passwordResetVerifyTokenApiCall(params),
+		async () => await verifyTokenApiCall(params),
 		{
 			onError: async (error) => {
 				const { message } = await error.response.data;

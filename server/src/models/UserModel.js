@@ -29,6 +29,10 @@ const UserSchema = new Schema(
 				"Password require 6 to 12 characters which contain at least one numeric digit, one uppercase and one lowercase letter.",
 			],
 		},
+		verified: {
+			type: Boolean,
+			default: false,
+		},
 		active: {
 			type: Boolean,
 			default: true,

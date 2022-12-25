@@ -5,7 +5,8 @@ const initialState = {
 	isAuthenticated: false,
 	user: {
 		email: "",
-		thumbnailUrl: ""
+		thumbnailUrl: "",
+		verified: false
 	},
 }
 

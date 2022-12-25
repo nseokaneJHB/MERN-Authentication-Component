@@ -1,10 +1,6 @@
-const path = require('path')
-
 // Third Party Middleware And Libraries
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer")
-const hbs = require('nodemailer-express-handlebars')
 
 // Utils
 const UserModel = require("../models/UserModel");
@@ -14,18 +10,11 @@ const {
 	convertToTitleCase,
 } = require("../utils/utils");
 const { validateNameEmailAndPassword } = require("../utils/validations");
+const { generateToken } = require("../utils/handletoken")
+const { sendEmail } = require("../utils/handleemail")
 
 // Env
-const { TOKEN_SECRET_KEY, TOKEN_SECRET_KEY_EXPIRY, GMAIL_EMAIL, GMAIL_PASSWORD, CLIENT_URL } = process.env
-
-// Email configuration
-const transporter = nodemailer.createTransport({
-	service: "gmail",
-	auth: {
-		user: GMAIL_EMAIL,
-		pass: GMAIL_PASSWORD
-	}
-})
+const { TOKEN_SECRET_KEY, TOKEN_SECRET_KEY_EXPIRY, CLIENT_URL } = process.env
 
 // Other controllers
 const { getUserById } = require("./UserController")
@@ -64,6 +53,18 @@ const signup = async (request, response, next) => {
 		name: convertToTitleCase(name),
 	});
 
+	// Generate Token
+	token = generateToken(user, "120s")
+
+	if (!user && !token) return await errorResponse(response, 400, "error", "Request failed", null);
+
+	// Send email for verification
+	const email_sent = await sendEmail(user, "Email verification", "email-verification", `${CLIENT_URL}/verify-email/${user.id}/${token}/`)
+
+	if (email_sent.status === false) {
+		return await errorResponse(response, 400, "error", email_sent.message, email_sent);
+	}
+
 	try {
 		await user.save();
 	} catch (error) {
@@ -74,7 +75,7 @@ const signup = async (request, response, next) => {
 		response,
 		201,
 		"success",
-		`Thank you for joining us ${user.name}.`,
+		email_sent.message,
 		null
 	);
 };
@@ -130,15 +131,17 @@ const signin = async (request, response, next) => {
 	}
 
 	// Generate Token
-	const token = jwt.sign({ id: user.id }, TOKEN_SECRET_KEY, {
-		expiresIn: TOKEN_SECRET_KEY_EXPIRY,
-	});
+	token = generateToken(user, TOKEN_SECRET_KEY_EXPIRY)
 
 	if (request.cookies[user.id]) {
 		request.cookies[user.id] = ""
 	}
 
-	response.cookie(String(user.id), token, {
+	response.user = {
+		userId: user.id
+	}
+
+	response.cookie("msacToken", token, {
 		path: "/",
 		maxAge: 30000 * 60,
 		httpOnly: true,
@@ -150,7 +153,7 @@ const signin = async (request, response, next) => {
 		200,
 		"success",
 		`Hello ${user.name}, we are glad to see you back.`,
-		{ email: user.email, thumbnail: user.thumbnail.filename }
+		{ email: user.email, thumbnail: user.thumbnail.filename, verified: user.verified }
 	);
 };
 
@@ -171,7 +174,7 @@ const signout = async (request, response, next) => {
 };
 
 // Verify Token
-const passwordresetverifytoken = async (request, response, next) => {
+const verifytokenfromemaillink = async (request, response, next) => {
 	const { userId, token } = request.params
 
 	const user = await getUserById(response, userId);	
@@ -190,7 +193,7 @@ const passwordresetverifytoken = async (request, response, next) => {
 			null
 		);
 	} catch (error) {
-		return await errorResponse(response, 400, "error", "Token expired. Please restart the reset password process or sign in.", error);
+		return await errorResponse(response, 400, "error", "Token expired. Please request again.", error);
 	}
 }
 
@@ -208,54 +211,28 @@ const passwordresetrequest = async (request, response, next) => {
 
 	try {
 		user = await UserModel.findOne({ email }).exec()
-
 		// Generate Token
-		token = jwt.sign({ id: user.id }, TOKEN_SECRET_KEY, {
-			expiresIn: "120s",
-		});
+		token = generateToken(user, "120s")
 	} catch (error) {
 		return await errorResponse(response, 400, "error", error.message, error);
 	}
 
 	if (!user && !token) return await errorResponse(response, 400, "error", "Request failed", null);
 
-	// point to the template folder
-	const handlebarOptions = {
-		viewEngine: {
-			partialsDir: path.resolve('./views/'),
-			defaultLayout: false,
-		},
-		viewPath: path.resolve('./views/'),
-	};
+	// Send Email
+	const email_sent = await sendEmail(user, "Password reset", "password-reset", `${CLIENT_URL}/password-reset/${user.id}/${token}/`)
 
-	// use a template file with nodemailer
-	transporter.use('compile', hbs(handlebarOptions))
-
-	const mailOptions = {
-		from: `MERN Stack Authentication Component<${GMAIL_EMAIL}>`,
-		to: email,
-		subject: "Password reset link for the MERN stack Authentication component",
-		template: 'email',
-		context:{
-			name: user.name,
-			reset_password_url: `${CLIENT_URL}/password-reset/${user.id}/${token}/`,
-			website_url: CLIENT_URL,
-			auth_component_email: GMAIL_EMAIL
-		}
+	if (email_sent.status === false) {
+		return await errorResponse(response, 400, "error", email_sent.message, email_sent);
 	}
 
-	try {
-		await transporter.sendMail(mailOptions);
-		return await successResponse(
-			response,
-			200,
-			"success",
-			`Password reset link sent`,
-			null
-		);
-	} catch (error) {
-		return await errorResponse(response, 400, "error", error.message, error);
-	}
+	return await successResponse(
+		response,
+		200,
+		"success",
+		email_sent.message,
+		null
+	);
 }
 
 const passwordreset = async (request, response, next) => {
@@ -270,7 +247,7 @@ const passwordreset = async (request, response, next) => {
 		return await errorResponse(response, 400, "error", error.message, error);
 	}
 
-	if (!user && !decode) return await errorResponse(response, 400, "error", "Request failed", null);
+	if (!user && !decode) return await errorResponse(response, 400, "error", "Token expired, please restart the forgot password process", null);
 
 	const valid = await validateNameEmailAndPassword({
 		...request.body,
@@ -298,11 +275,66 @@ const passwordreset = async (request, response, next) => {
 	}
 }
 
+const veryfyemailrequest = async (request, response, next) => {
+	const { userId } = request.user;
+	const user = await getUserById(response, userId);
+	// Generate Token
+	token = generateToken(user, "120s")
+
+	if (!user && !token) return await errorResponse(response, 400, "error", "Request failed", null);
+
+	// Send email for verification
+	const email_sent = await sendEmail(user, "Email verification", "email-verification", `${CLIENT_URL}/verify-email/${user.id}/${token}/`)
+
+	if (email_sent.status === false) {
+		return await errorResponse(response, 400, "error", email_sent.message, email_sent);
+	}
+
+	return await successResponse(
+		response,
+		201,
+		"success",
+		email_sent.message,
+		null
+	);
+}
+
+const veryfyemail = async (request, response, next) => {
+	const { userId, token } = request.params
+
+	const user = await getUserById(response, userId);	
+
+	let decode = null;
+	try {
+		decode = jwt.verify(token, TOKEN_SECRET_KEY);
+	} catch (error) {
+		return await errorResponse(response, 400, "error", error.message, error);
+	}
+
+	if (!user && !decode) return await errorResponse(response, 400, "error", "Token expired, please request to verify the email under your profile", null);
+
+	try {
+		user.verified = true
+		await user.save();
+		return await successResponse(
+			response,
+			200,
+			"success",
+			`Email successfully verified.`,
+			null
+		);
+	} catch (error) {
+		return await errorResponse(response, 400, "error", error.message, error);
+	}
+}
+
 module.exports = {
 	signup,
 	signin,
 	signout,
 	passwordresetrequest,
-	passwordresetverifytoken,
+	verifytokenfromemaillink,
 	passwordreset,
+	veryfyemailrequest,
+	veryfyemail,
 };

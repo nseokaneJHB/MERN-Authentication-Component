@@ -10,6 +10,7 @@ const {
 	reshapeUserData,
 } = require("../utils/utils");
 const { validateNameEmailAndPassword, oldPasswordAndNewPassword } = require("../utils/validations");
+const { sendEmail } = require("../utils/handleemail")
 
 // Get UserById
 const getUserById = async (response, userId) => {
@@ -95,10 +96,29 @@ const updateMe = async (request, response, next) => {
 
 // Delete Profile
 const deleteMe = async (request, response, next) => {
-	console.log(request.body);
-	return response.status(200).json({
-		message: "Deleting my account..."
-	})
+	const { userId } = request.user;
+	const user = await getUserById(response, userId);
+	
+	// Send email for verification
+	const email_sent = await sendEmail(user, "Email confirmation", "email-confirmation", ``)
+
+	if (email_sent.status === false) {
+		return await errorResponse(response, 400, "error", email_sent.message, email_sent);
+	}
+
+	try {
+		await user.delete();
+	} catch (error) {
+		return errorResponse(response, 400, "error", error.message, error);
+	}
+
+	return await successResponse(
+		response,
+		200,
+		"success",
+		"Account deleted. Please come back again.",
+		null
+	);
 };
 
 // Change email address

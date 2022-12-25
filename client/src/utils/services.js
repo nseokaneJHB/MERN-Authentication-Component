@@ -36,8 +36,8 @@ export const updateMeApiCall = async (payload) => {
 	return data
 }
 
-export const deleteMeApiCall = async (payload) => {
-	const { data } = await axios.delete(`${api_url}/settings/`, payload, apiOptions)
+export const deleteMeApiCall = async () => {
+	const { data } = await axios.delete(`${api_url}/settings/`, apiOptions)
 	return data
 }
 
@@ -51,12 +51,22 @@ export const passwordResetRequestApiCall = async (payload) => {
 	return data;
 };
 
-export const passwordResetVerifyTokenApiCall = async (params) => {
-	const { data } = await axios.get(`${api_url}/password-reset-verify/${params.userId}/${params.token}`, apiOptions);
+export const passwordResetApiCall = async (params, payload) => {
+	const { data } = await axios.post(`${api_url}/password-reset/${params.userId}/${params.token}`, payload, apiOptions);
 	return data;
 };
 
-export const passwordResetApiCall = async (params, payload) => {
-	const { data } = await axios.post(`${api_url}/password-reset/${params.userId}/${params.token}`, payload, apiOptions);
+export const verifyEmailRequestApiCall = async (payload={}) => {
+	const { data } = await axios.post(`${api_url}/verify-email-request/`, payload, apiOptions);
+	return data;
+}
+
+export const verifyEmailApiCall = async (payload={}, params) => {
+	const { data } = await axios.post(`${api_url}/verify-email/${params.userId}/${params.token}`, payload, apiOptions);
+	return data;
+}
+
+export const verifyTokenApiCall = async (params) => {
+	const { data } = await axios.get(`${api_url}/verify-token/${params.userId}/${params.token}`, apiOptions);
 	return data;
 };

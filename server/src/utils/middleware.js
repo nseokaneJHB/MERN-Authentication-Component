@@ -10,7 +10,7 @@ const { errorResponse } = require("./utils");
 const verifyToken = async (request, response, next) => {
 	try {
 		const headerCookie = request.headers.cookie
-		const token = headerCookie.split("=")[1]
+		const token = headerCookie.split("msacToken=")[1]
 
 		if (!token) {
 			return errorResponse(response, 404, "error", "Token not found", null);

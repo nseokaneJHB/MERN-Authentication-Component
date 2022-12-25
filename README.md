@@ -1,6 +1,6 @@
 # ***Authentication Component***
 
-## ***Stack***
+## ***Requirements***
 
 - [Mongoose](https://mongoosejs.com/docs/) - v6.7.1
 - [ExpressJS](https://expressjs.com/) - 4.18.2
@@ -14,6 +14,7 @@ This is a `MERN Stack component` which one can integrate into their system witho
 
 ## ***Features***
 - Email and Password Authentication
+- Email verification - `Coming soon`
 - Update Profile Information:
    * Name
    * Password
@@ -30,12 +31,17 @@ This is a `MERN Stack component` which one can integrate into their system witho
 ## ***Local Setup***
 
 1. Clone this project and go into the project directory using your terminal
-2. Configure the backend [Server](./server/README.md)
-3. Configure the frontend [Client](./client/README.md)
+2. Setup mongo [atlas](https://mongoosejs.com/docs/) or download [mongodb compass](https://mongoosejs.com/docs/) to your machine
+3. Configure the backend - [Server](./server/README.md)
+4. Configure the frontend - [Client](./client/README.md)
 
 ## ***Docker Setup*** - `Coming soon`
 
 ## ***Contribution***
 You can contribute by following these simple [guidelines](./.github/contribute_guidlines.md).
+
+#
+
+*If you run into some problems running this projects, be sure to contact me on my [email](mailto:kgotsonolan.dev@gmail.com)*.
 
 By *`Nolan Seokane`* from the *`08th November 2022`*

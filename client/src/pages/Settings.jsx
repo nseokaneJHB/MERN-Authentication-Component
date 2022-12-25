@@ -23,7 +23,11 @@ import { Input } from "../components/Input";
 import { PopupMessage } from "../components/PopupMessage";
 
 // API Calls
-import { getMeApiCall, updateMeApiCall } from "../utils/services";
+import {
+	getMeApiCall,
+	updateMeApiCall,
+	verifyEmailRequestApiCall,
+} from "../utils/services";
 
 // Context
 import { authActions } from "../store/authSlice";
@@ -45,6 +49,7 @@ export const Settings = () => {
 	const [userDetails, setUserDetails] = useState({
 		name: "",
 		email: "",
+		verified: false,
 		active: false,
 		thumbnail: "",
 		password: "",
@@ -59,7 +64,7 @@ export const Settings = () => {
 		setUserDetails({ ...userDetails, [name]: value });
 	};
 
-	const { status: profileStatus } = useQuery(
+	const { status: profileStatus, data: profileData } = useQuery(
 		["userProfileData"],
 		async () => await getMeApiCall(),
 		{
@@ -70,6 +75,7 @@ export const Settings = () => {
 			},
 			onError: async (error) => {
 				const { message } = await error.response.data;
+				
 				setErrorMessage(message);
 				setShowError(true);
 				dispatch(authActions.logout());
@@ -94,10 +100,10 @@ export const Settings = () => {
 				}, 2000);
 			},
 			onError: async (error) => {
-				const { errors, message } = error.response.data;
+				const { errors, message } = await error.response.data;
 
 				if (errors) {
-					setErrors(await error.response.data.errors);
+					setErrors(await errors);
 					setShowErrors(true);
 				} else if (message) {
 					setErrorMessage(message);
@@ -115,9 +121,35 @@ export const Settings = () => {
 			},
 		});
 
+	const { status: verifyEmailRequestStatus, mutate: mutateVerifyEmailRequest } = useMutation({
+		mutationFn: async () => await verifyEmailRequestApiCall(),
+		onSuccess: async (response) => {
+			const { message } = await response;
+			setShowSuccess(true);
+			setSuccessMessage(message);
+			setTimeout(() => {
+				setShowSuccess(false);
+			}, 5000);
+		},
+		onError: async (error) => {
+			const { errors } = await error.response.data;
+			if (errors.command === "CONN") {
+				setErrorMessage("Could not complete your request, please make sure you are connected to the internet");
+				setShowError(true);
+				setTimeout(() => {
+				setShowError(false);
+				}, 5000);
+			}
+		},
+	});
+
 	const handleUpdateProfile = (event) => {
 		event.preventDefault();
 		mutateUpdateProfile(userDetails);
+	};
+
+	const handleSendVerifyEmail = () => {
+		mutateVerifyEmailRequest();
 	};
 
 	return (
@@ -170,7 +202,9 @@ export const Settings = () => {
 				/>
 				<Input
 					iDisabled={
-						profileStatus === "loading" || updateProfileStatus === "loading"
+						profileStatus === "loading" ||
+						updateProfileStatus === "loading" ||
+						!userDetails.verified
 							? true
 							: false
 					}
@@ -194,7 +228,9 @@ export const Settings = () => {
 				)}
 				<Input
 					iDisabled={
-						profileStatus === "loading" || updateProfileStatus === "loading"
+						profileStatus === "loading" ||
+						updateProfileStatus === "loading" ||
+						!userDetails.verified
 							? true
 							: false
 					}
@@ -218,7 +254,9 @@ export const Settings = () => {
 				)}
 				<Input
 					iDisabled={
-						profileStatus === "loading" || updateProfileStatus === "loading"
+						profileStatus === "loading" ||
+						updateProfileStatus === "loading" ||
+						!userDetails.verified
 							? true
 							: false
 					}
@@ -232,7 +270,14 @@ export const Settings = () => {
 				/>
 				<div className="flex justify-center gap-3 hover:cursor-pointer">
 					<input
-          className="hover:cursor-pointer"
+						className="hover:cursor-pointer"
+						disabled={
+							profileStatus === "loading" ||
+							updateProfileStatus === "loading" ||
+							!userDetails.verified
+								? true
+								: false
+						}
 						type="checkbox"
 						checked={userDetails.active}
 						id="active"
@@ -245,16 +290,18 @@ export const Settings = () => {
 						}
 						value={userDetails.active}
 					/>
-					<label htmlFor="active" className="text-gray-600 hover:cursor-pointer">
-						Your account will be{" "}
-						{userDetails.active ? "active" : "inactive"}. Do you want to{" "}
-						{userDetails.active ? "deactivate" : "activate"}?
+					<label
+						htmlFor="active"
+						className="text-gray-600 hover:cursor-pointer"
+					>
+						Your account will be {userDetails.active ? "active" : "inactive"}.
+						Do you want to {userDetails.active ? "deactivate" : "activate"}?
 					</label>
 				</div>
 				{!userDetails.active ? (
 					<p className="mt-2 italic text-rose-400">
-						<strong>NB:</strong> By leaving the checkbox unchecking you are deactivating
-						your account and you will be kicked out of the system.
+						<strong>NB:</strong> By leaving the checkbox unchecking you are
+						deactivating your account and you will be kicked out of the system.
 						<br />
 						<br />
 						You'll have to sign in again to re-activate your account.
@@ -264,7 +311,9 @@ export const Settings = () => {
 				)}
 				<Input
 					iDisabled={
-						profileStatus === "loading" || updateProfileStatus === "loading"
+						profileStatus === "loading" ||
+						updateProfileStatus === "loading" ||
+						!userDetails.verified
 							? true
 							: false
 					}
@@ -290,9 +339,33 @@ export const Settings = () => {
 				<p className="mt-2 italic text-gray-600">
 					<strong>NB:</strong> Password is required to update your profile.
 				</p>
+				{profileData && !userDetails.verified ? (
+					<>
+            <Button
+              bDisabled={
+                profileStatus === "loading" || updateProfileStatus === "loading" || verifyEmailRequestStatus === "loading"
+                  ? true
+                  : false
+              }
+              bStyles={
+                "bg-yellow-400 hover:bg-yellow-500 border-yellow-500 hover:border-yellow-500 text-black mb-0"
+              }
+              bType={"button"}
+              bLabel={"Verify Email"}
+              handleOnClick={handleSendVerifyEmail}
+            />
+            <p className="mt-2 italic text-rose-400">
+              <strong>NB:</strong> You can't update your information this time because your email is not verified, please click the "Verify Email" button to send an email verification link.
+            </p>
+          </>
+				) : (
+					<></>
+				)}
 				<Button
 					bDisabled={
-						profileStatus === "loading" || updateProfileStatus === "loading"
+						profileStatus === "loading" ||
+						updateProfileStatus === "loading" ||
+						!userDetails.verified
 							? true
 							: false
 					}
@@ -304,22 +377,24 @@ export const Settings = () => {
 					handleOnClick={handleUpdateProfile}
 				/>
 				<p className="text-center text-gray-600">
-          Change{" "}
+					Change{" "}
 					<Link
 						className="text-blue-500 hover:text-blue-600 visited:text-blue-400"
 						to={"/password-change"}
 					>
 						password
-					</Link>,{" "}
-          <Link
+					</Link>
+					,{" "}
+					<Link
 						className="text-blue-500 hover:text-blue-600 visited:text-blue-400"
 						to={"/password-change"}
 					>
 						email
-					</Link>{" "}Or{" "}
+					</Link>{" "}
+					Or{" "}
 					<Link
-						className="text-rose-500 hover:text-rose-600 visited:text-rose-400"
-						to={"/password-change"}
+						className="text-blue-500 hover:text-blue-600 visited:text-blue-400"
+						to={"/delete-account"}
 					>
 						delete account.
 					</Link>

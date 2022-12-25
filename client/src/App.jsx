@@ -12,9 +12,11 @@ import { Layout } from "./components/Layout";
 import { SignIn } from "./pages/Sign-In";
 import { SignUp } from "./pages/Sign-Up";
 import { Settings } from "./pages/Settings";
-import { PasswordChange } from "./pages/Password-Change";
+import { VerifyEmail } from "./pages/Verify-Email";
 import { PageNotFound } from "./pages/PageNotFound";
-import { PasswordReset } from "./pages/Password-Reset"
+import { DeleteAccount } from "./pages/Delete-Account";
+import { PasswordReset } from "./pages/Password-Reset";
+import { PasswordChange } from "./pages/Password-Change";
 import { PasswordResetRequest } from "./pages/Password-Reset-Request";
 import { PasswordResetConfirm } from "./pages/Password-Reset-Confirm";
 
@@ -31,6 +33,7 @@ export const App = () => {
 							<Route path="/" element={<Navigate to={"/settings"} />} />
 							<Route path="/settings/" element={<Settings />} />
 							<Route path="/password-change/" element={<PasswordChange />} />
+							<Route path="/delete-account/" element={<DeleteAccount />} />
 						</>
 					) : (
 						<>
@@ -40,6 +43,7 @@ export const App = () => {
 							<Route path="/password-reset/:userId/:token/" element={<PasswordReset />} />
 							<Route path="/password-reset-request/" element={<PasswordResetRequest />} />
 							<Route path="/password-reset-confirm/" element={<PasswordResetConfirm />} />
+							<Route path="/verify-email/:userId/:token/" element={<VerifyEmail />} />
 						</>
 					)}
 					<Route path="*" element={<PageNotFound />} />

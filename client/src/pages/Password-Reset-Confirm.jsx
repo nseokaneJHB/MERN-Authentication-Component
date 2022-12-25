@@ -28,7 +28,7 @@ export const PasswordResetConfirm = () => {
 						"bg-yellow-400 hover:bg-yellow-500 border-yellow-500 hover:border-yellow-500 text-black"
 					}
 					bType={"button"}
-					bLabel={"Home"}
+					bLabel={"Go Home"}
 					handleOnClick={() => navigate("/")}
 				/>
 			</div>
