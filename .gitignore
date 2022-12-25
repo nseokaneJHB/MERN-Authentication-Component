@@ -5,6 +5,9 @@
 
 */.env
 
+mongo/db-init.js/
+mongo/mongo-volume/
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies

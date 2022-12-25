@@ -1,0 +1,45 @@
+version: "3"
+services:
+  mongo:
+    container_name: mern-stack-authentication-component-server-db
+    image: mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./mongo/db-init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo/mongo-volume:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=MERN-AUTHENTICATION-COMPONENT
+      - MONGO_INITDB_USER=local_user
+      - MONGO_INITDB_PASSWORD=Password123
+  server:
+    container_name: mern-stack-authentication-component-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server:/server
+      - ./server/node_modules:/server/node_modules
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - ./server/.env
+    depends_on:
+      - mongo
+    ports:
+      - "8080:4000"
+  client:
+    container_name: mern-stack-authentication-component-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - ./client/.env
+    volumes:
+      - ./client:/client
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
