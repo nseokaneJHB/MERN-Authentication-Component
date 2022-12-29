@@ -12,7 +12,7 @@ RUN mkdir -p /server
 WORKDIR /server
 
 # copying our dependencies to the container
-COPY ./package.json /server/
+COPY package.json /server/
 
 # installing all the dependencies that we copied 
 RUN yarn install

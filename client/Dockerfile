@@ -9,7 +9,7 @@ RUN mkdir -p /client
 WORKDIR /client
 
 # copying our dependencies to the container
-COPY ./package.json /client/
+COPY package.json /client/
 
 RUN ls
 
