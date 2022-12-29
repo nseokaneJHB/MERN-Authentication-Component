@@ -1,9 +1,24 @@
+# here we're specifying the version of node
+# we can use the :latest tag as well.
 FROM node:16-alpine
-# Create app directory
+
+# here we're defining the working directory
 WORKDIR /client
-COPY package.json yarn.lock ./
-COPY . .
-# Install app dependencies
+
+# copying our dependencies to the container
+COPY ./package.json ./
+
+# installing all the dependencies that we copied 
 RUN yarn install
-ENV NODE_ENV=development
+
+# copying all the files inside the container
+COPY . .
+
+# Build the application
+RUN yarn build
+
+# exposing the port so we can access it further
+EXPOSE 3000
+
+# starting the server
 CMD [ "yarn", "start" ]

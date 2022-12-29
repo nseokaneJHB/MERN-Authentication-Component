@@ -1,5 +1,5 @@
 // Third Party Middleware And Libraries
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 // Imports
 const UserModel = require("../models/UserModel");

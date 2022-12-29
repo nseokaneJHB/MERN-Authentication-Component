@@ -3,7 +3,6 @@ const express = require("express");
 const app = express();
 
 // Third Party Middleware And Libraries
-const bodyParser = require('body-parser')
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -15,7 +14,7 @@ const authRouter = require("./routes/AuthRouter");
 const userRouter = require("./routes/UserRouter");
 
 // Initializations
-const { PORT, REMOTE_DB_URL, LOCAL_DB_URL, CLIENT_URL } = process.env;
+const { PORT, REMOTE_DB_URL, LOCAL_DB_URL, DOCKER_DB_URL, CLIENT_URL } = process.env;
 
 const corsOptions = {
 	origin: CLIENT_URL,
@@ -64,7 +63,7 @@ app.use("/api", userRouter);
 
 // Connect to mongoDB and Start Server
 mongoose
-	.connect(REMOTE_DB_URL || LOCAL_DB_URL)
+	.connect(REMOTE_DB_URL || DOCKER_DB_URL || LOCAL_DB_URL)
 	.then(() => {
 		app.listen(PORT, async () => {
 			console.log(

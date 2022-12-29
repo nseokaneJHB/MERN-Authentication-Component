@@ -1,13 +1,24 @@
-FROM node:16
-# Create a directory for the app
+# here we're specifying the version of node
+# we can use the :latest tag as well.
+FROM node:16-alpine
+
+# Adding nodemon
+RUN yarn global add nodemon
+
+# here we're defining the working directory
 WORKDIR /server
-# Install VI editor incase a file needs to be edited.
-RUN apt-get update && apt-get install -y vim
-# Install app dependencies
-COPY package*.json ./
-RUN npm install
-# Install nodemon for auto-restart capability
-RUN npm i --location=global nodemon
-# Copy source directory
+
+# copying our dependencies to the container
+COPY ./package.json ./
+
+# installing all the dependencies that we copied 
+RUN yarn install
+
+# copying all the files inside the container
 COPY . .
-CMD [ "yarn", "dev" ]
+
+# exposing the port so we can access it further
+EXPOSE 8000
+
+# starting the server
+CMD ["yarn", "dev"]

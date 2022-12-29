@@ -1,0 +1,8 @@
+
+node_modules
+build
+.git
+.DS_Store
+node_modules
+.env_sample
+README.md
