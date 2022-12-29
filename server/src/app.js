@@ -59,8 +59,6 @@ app.get("/api", async (request, response, next) => {
 app.use("/api", authRouter);
 app.use("/api", userRouter);
 
-// Other Middleware
-
 // Connect to mongoDB and Start Server
 mongoose
 	.connect(REMOTE_DB_URL || DOCKER_DB_URL || LOCAL_DB_URL)

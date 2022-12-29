@@ -14,7 +14,7 @@ This is a `MERN Stack component` which one can integrate into their system witho
 
 ## ***Features***
 - Email and Password Authentication
-- Email verification - `Coming soon`
+- Email verification
 - Update Profile Information:
    * Name
    * Password
@@ -35,7 +35,9 @@ This is a `MERN Stack component` which one can integrate into their system witho
 3. Configure the backend - [Server](./server/README.md)
 4. Configure the frontend - [Client](./client/README.md)
 
-## ***Docker Setup*** - `Coming soon`
+## ***Docker Setup***
+1. Make sure you have docker installed in your machine
+2. Run `docker-compose up --build` in the same directory as the `docker-compose.yml` file
 
 ## ***Contribution***
 You can contribute by following these simple [guidelines](./.github/contribute_guidlines.md).

@@ -2,18 +2,18 @@ version: "3.8"
 services:
   database:
     image: mongo
-    container_name: mern-stack-authentication-component-database
+    container_name: msac-database
     ports:
       - "27017:27017"
     volumes:
       - mongo:/data/db
     networks:
-      - mern-stack-authentication-component-network
+      - msac-network
 
   backend:
     depends_on:
       - database
-    container_name: mern-stack-authentication-component-backend
+    container_name: msac-backend
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -23,12 +23,12 @@ services:
     ports:
       - "8000:8000"
     networks:
-      - mern-stack-authentication-component-network
+      - msac-network
 
   frontend:
     depends_on:
       - backend
-    container_name: mern-stack-authentication-component-frontend
+    container_name: msac-frontend
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -36,11 +36,12 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - mern-stack-authentication-component-network  
+      - msac-network  
 
 volumes:
   mongo:
+    driver: local
 
 networks:
-  mern-stack-authentication-component-network:
+  msac-network:
     driver: bridge
