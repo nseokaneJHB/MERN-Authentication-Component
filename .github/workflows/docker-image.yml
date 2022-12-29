@@ -12,11 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the Docker image
-        run: docker build ./server --file Dockerfile --tag msac-backend:$(date +%s)
+        run: docker build . --file server/Dockerfile --tag msac-backend:$(date +%s)
 
   frontend:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build ./client --file Dockerfile --tag msac-frontend:$(date +%s)
+      run: docker build . --file client/Dockerfile --tag msac-frontend:$(date +%s)
