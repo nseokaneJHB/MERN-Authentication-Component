@@ -14,6 +14,14 @@ services:
     depends_on:
       - database
     container_name: msac-backend
+    environment:
+      PORT: ${PORT}
+      DOCKER_DB_URL: ${DOCKER_DB_URL}
+      REMOTE_DB_URL: ${REMOTE_DB_URL}
+      TOKEN_SECRET_KEY: ${TOKEN_SECRET_KEY}
+      TOKEN_SECRET_KEY_EXPIRY: ${TOKEN_SECRET_KEY_EXPIRY}
+      GMAIL_EMAIL: ${GMAIL_EMAIL}
+      GMAIL_PASSWORD: ${GMAIL_PASSWORD}
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -29,6 +37,8 @@ services:
     depends_on:
       - backend
     container_name: msac-frontend
+    environment:
+      REACT_APP_API_URL: ${REACT_APP_API_URL}
     build:
       context: ./client
       dockerfile: Dockerfile

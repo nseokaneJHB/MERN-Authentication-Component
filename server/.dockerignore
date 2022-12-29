@@ -1,4 +1,8 @@
 node_modules
+.git
+.vscode/
+.DS_Store
 npm-debug.log
 .env_sample
+.env
 README.md

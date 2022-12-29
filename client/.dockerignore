@@ -1,8 +1,9 @@
-
 node_modules
 build
 .git
+.vscode/
 .DS_Store
 node_modules
 .env_sample
+.env
 README.md

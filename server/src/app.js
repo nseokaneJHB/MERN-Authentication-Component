@@ -65,7 +65,7 @@ mongoose
 	.then(() => {
 		app.listen(PORT, async () => {
 			console.log(
-				`⚡️[server]: Server started at http://localhost:${PORT || 9000}`
+				`⚡️[server]: Server started at http://localhost:${PORT || 8000}`
 			);
 		});
 	})
