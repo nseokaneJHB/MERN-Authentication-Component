@@ -2,17 +2,22 @@
 # we can use the :latest tag as well.
 FROM node:16-alpine
 
+# Create an application directory
+RUN mkdir -p /client
+
 # here we're defining the working directory
 WORKDIR /client
 
 # copying our dependencies to the container
-COPY ./package.json ./
+COPY ./package.json /client
+
+RUN ls
 
 # installing all the dependencies that we copied 
 RUN yarn install
 
 # copying all the files inside the container
-COPY . .
+COPY . /client
 
 # Build the application
 RUN yarn build

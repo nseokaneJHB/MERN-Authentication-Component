@@ -5,17 +5,20 @@ FROM node:16-alpine
 # Adding nodemon
 RUN yarn global add nodemon
 
+# Create an application directory
+RUN mkdir -p /server
+
 # here we're defining the working directory
 WORKDIR /server
 
 # copying our dependencies to the container
-COPY ./package.json ./
+COPY ./package.json /server
 
 # installing all the dependencies that we copied 
 RUN yarn install
 
 # copying all the files inside the container
-COPY . .
+COPY . /server
 
 # exposing the port so we can access it further
 EXPOSE 8000
