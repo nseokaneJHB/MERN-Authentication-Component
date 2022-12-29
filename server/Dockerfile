@@ -12,13 +12,13 @@ RUN mkdir -p /server
 WORKDIR /server
 
 # copying our dependencies to the container
-COPY ./package.json /server
+COPY ./package.json /server/
 
 # installing all the dependencies that we copied 
 RUN yarn install
 
 # copying all the files inside the container
-COPY . /server
+COPY . /server/
 
 # exposing the port so we can access it further
 EXPOSE 8000

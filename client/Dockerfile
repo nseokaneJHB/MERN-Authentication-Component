@@ -9,7 +9,7 @@ RUN mkdir -p /client
 WORKDIR /client
 
 # copying our dependencies to the container
-COPY ./package.json /client
+COPY ./package.json /client/
 
 RUN ls
 
@@ -17,7 +17,7 @@ RUN ls
 RUN yarn install
 
 # copying all the files inside the container
-COPY . /client
+COPY . /client/
 
 # Build the application
 RUN yarn build
