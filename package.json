@@ -14,10 +14,10 @@
     "fe": "cd frontend && yarn start",
     "be": "cd backend && yarn start",
     "be-dev": "cd backend && yarn dev",
-    "start": "concurrently --kill-others-on-fail \"yarn be\" \"yarn fe\"",
     "dev": "concurrently --kill-others-on-fail \"yarn be-dev\" \"yarn fe\"",
     "docker": "docker-compose up --build",
-    "build": "cd backend && yarn install  && cd ../frontend && yarn install && yarn build"
+    "build": "cd backend && yarn install  && cd ../frontend && yarn install && yarn build",
+    "start": "cd frontend && yarn install && yarn build && cd ../backend && yarn install && yarn be"
   },
   "devDependencies": {
     "concurrently": "^7.6.0"
