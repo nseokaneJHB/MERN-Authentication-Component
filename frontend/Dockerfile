@@ -3,21 +3,19 @@
 FROM node:16-alpine
 
 # Create an application directory
-RUN mkdir -p /client
+RUN mkdir -p /frontend
 
 # here we're defining the working directory
-WORKDIR /client
+WORKDIR /frontend
 
 # copying our dependencies to the container
-COPY package.json /client/
-
-RUN ls
+COPY package.json /frontend/
 
 # installing all the dependencies that we copied 
 RUN yarn install
 
 # copying all the files inside the container
-COPY . /client/
+COPY . /frontend/
 
 # Build the application
 RUN yarn build

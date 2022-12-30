@@ -6,22 +6,22 @@ FROM node:16-alpine
 RUN yarn global add nodemon
 
 # Create an application directory
-RUN mkdir -p /server
+RUN mkdir -p /backend
 
 # here we're defining the working directory
-WORKDIR /server
+WORKDIR /backend
 
 # copying our dependencies to the container
-COPY package.json /server/
+COPY package.json /backend/
 
 # installing all the dependencies that we copied 
 RUN yarn install
 
 # copying all the files inside the container
-COPY . /server/
+COPY . /backend/
 
 # exposing the port so we can access it further
 EXPOSE 8000
 
-# starting the server
+# starting the backend
 CMD ["yarn", "dev"]
