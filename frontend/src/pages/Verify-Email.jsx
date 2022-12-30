@@ -21,44 +21,43 @@ export const VerifyEmail = () => {
 	const [showError, setShowError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 
-  const [showSuccess, setShowSuccess] = useState(false);
+	const [showSuccess, setShowSuccess] = useState(false);
 	const [successMessage, setSuccessMessage] = useState("");
 
-  const { status: verifyEmailStatus, mutate: mutateVerifyEmail } = useMutation({
+	const { status: verifyEmailStatus, isError: verifyEmailError, mutate: mutateVerifyEmail } = useMutation({
 		mutationFn: async () => await verifyEmailApiCall({}, params),
 		onSuccess: async (response) => {
 			const { message } = await response;
-				setShowSuccess(true);
-				setSuccessMessage(message);
-				setTimeout(() => {
-					setShowSuccess(false);
-				}, 5000);
+			setShowSuccess(true);
+			setSuccessMessage(message);
+			setTimeout(() => {
+				setShowSuccess(false);
+			}, 5000);
 		},
 		onError: async (error) => {
 			const { message } = await error.response.data;
-      setErrorMessage(message);
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-      }, 3000);
+			setErrorMessage(message);
+			setShowError(true);
+			setTimeout(() => {
+				setShowError(false);
+			}, 5000);
 		},
 	});
 
 	// Verify Token
-	const { status: verifyTokenLoading } = useQuery(
+	const { status: verifyTokenStatus, isError: verifyTokenError } = useQuery(
 		["verifytoken"],
 		async () => await verifyTokenApiCall(params),
 		{
-      onSuccess: async (response) => {
-        mutateVerifyEmail()
-      },
+			onSuccess: async (response) => {
+				mutateVerifyEmail();
+			},
 			onError: async (error) => {
 				const { message } = await error.response.data;
 				setErrorMessage(message);
 				setShowError(true);
 				setTimeout(() => {
 					setShowError(false);
-					navigate("/sign-in", { replace: true });
 				}, 5000);
 			},
 		}
@@ -71,25 +70,33 @@ export const VerifyEmail = () => {
 		>
 			<div className="w-full p-4 sm:px-6 lg:px-10 max-w-xl">
 				<h1 className="text-4xl font-bold text-center text-gray-600">
-					Email Verified
+					Email Verification
 				</h1>
-        <PopupMessage
+				<PopupMessage
 					pType={"success"}
 					pShow={showSuccess}
 					pClose={() => handleClosePopup(setShowSuccess, setSuccessMessage)}
 					pMessage={successMessage}
 				/>
-        <PopupMessage
+				<PopupMessage
 					pType={"error"}
 					pShow={showError}
 					pClose={() => handleClosePopup(setShowError, setErrorMessage)}
 					pMessage={errorMessage}
 				/>
 				<p className="my-2 italic text-gray-600 text-center">
-					Thank you for verifying your email.
+					{verifyTokenStatus === "loading" || verifyEmailStatus === "loading"
+						? "Verifying your email."
+						: verifyTokenError === true || verifyEmailError === true
+						? "Could not verify your email. Please try again."
+						: "Thank you for verifying your email."}
 				</p>
 				<Button
-					bDisabled={verifyTokenLoading === "loading" || verifyEmailStatus === "loading" ? true : false}
+					bDisabled={
+						verifyTokenStatus === "loading" || verifyEmailStatus === "loading"
+							? true
+							: false
+					}
 					bStyles={
 						"bg-yellow-400 hover:bg-yellow-500 border-yellow-500 hover:border-yellow-500 text-black"
 					}
