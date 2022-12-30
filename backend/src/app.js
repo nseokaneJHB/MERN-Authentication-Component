@@ -2,6 +2,8 @@
 const express = require("express");
 const app = express();
 
+const path = require("path")
+
 // Third Party Middleware And Libraries
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
@@ -58,6 +60,12 @@ app.get("/api", async (request, response, next) => {
 });
 app.use("/api", authRouter);
 app.use("/api", userRouter);
+
+// Serve Static file
+app.use(express.static(path.join(path.resolve(), '../frontend/build')));
+app.get('*', (req, res) =>
+  res.sendFile(path.join(path.resolve(), '../frontend/build/index.html'))
+);
 
 // Connect to mongoDB and Start Server
 mongoose
