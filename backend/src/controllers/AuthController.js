@@ -214,7 +214,7 @@ const passwordresetrequest = async (request, response, next) => {
 		// Generate Token
 		token = generateToken(user, "120s")
 	} catch (error) {
-		return await errorResponse(response, 400, "error", error.message, error);
+		return await errorResponse(response, 400, "error", "Sorry that email does not exist", null);
 	}
 
 	if (!user && !token) return await errorResponse(response, 400, "error", "Request failed", null);
