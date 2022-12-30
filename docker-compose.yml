@@ -23,11 +23,10 @@ services:
       GMAIL_EMAIL: ${GMAIL_EMAIL}
       GMAIL_PASSWORD: ${GMAIL_PASSWORD}
     build:
-      context: ./server
+      context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./server:/server
-    env_file: ./server/.env
+      - ./backend:/backend
     ports:
       - "8000:8000"
     networks:
@@ -40,9 +39,8 @@ services:
     environment:
       REACT_APP_API_URL: ${REACT_APP_API_URL}
     build:
-      context: ./client
+      context: ./frontend
       dockerfile: Dockerfile
-    env_file: ./client/.env
     ports:
       - "3000:3000"
     networks:

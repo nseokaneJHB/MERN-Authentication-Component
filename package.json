@@ -1,0 +1,23 @@
+{
+  "name": "authentication",
+  "version": "1.0.0",
+  "repository": "https://github.com/nseokaneJHB/MERN-Authentication-Component.git",
+  "author": "Nolan Seokane <nolanseokane@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nseokaneJHB/MERN-Authentication-Component/issues"
+  },
+  "homepage": "https://github.com/nseokaneJHB/MERN-Authentication-Component/blob/main/README.md",
+  "private": true,
+  "workspaces": [ "backend", "frontend" ],
+  "scripts": {
+    "fe": "cd frontend && yarn start",
+    "be": "cd backend && yarn dev",
+    "dev": "concurrently --kill-others-on-fail \"yarn be\" \"yarn fe\"",
+    "start": "docker-compose up --build",
+    "build": "cd backend && yarn install  && cd ../frontend && yarn install && yarn build"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
