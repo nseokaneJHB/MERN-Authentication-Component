@@ -44,6 +44,6 @@ You can contribute by following these simple [guidelines](./.github/contribute_g
 
 #
 
-*If you run into some problems running this projects, be sure to contact me on my [email](mailto:kgotsonolan.dev@gmail.com)*.
+*If you run into some problems running this projects, be sure to contact me on my [email](mailto:kgotsonolan.dev@gmail.com) or on Discord `Nolan S#1017`*.
 
 By *`Nolan Seokane`* from the *`08th November 2022`*
