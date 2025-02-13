@@ -25,7 +25,7 @@ import { signInApiCall } from "../utils/services";
 import { authActions } from "../store/authSlice";
 
 export const SignIn = () => {
-  	const dispatch = useDispatch()
+	const dispatch = useDispatch()
 
 	const navigate = useNavigate();
 
@@ -91,7 +91,7 @@ export const SignIn = () => {
 	const handleSignIn = (event) => {
 		// Add loader here...
 		event.preventDefault();
-	 	mutateSignIn(userCredentials);
+		mutateSignIn(userCredentials);
 	};
 
 	return (
@@ -100,24 +100,24 @@ export const SignIn = () => {
 			<div className="w-full p-4 sm:px-6 lg:px-10 xl:w-4/6">
 				<h1 className="text-4xl font-bold text-center text-gray-600">Sign In</h1>
 				<PopupMessage
-					pType={"success"}
+					pType="success"
 					pShow={showSuccess}
 					pClose={() => handleClosePopup(setShowSuccess, setSuccessMessage)}
 					pMessage={successMessage}
 				/>
 				<PopupMessage
-					pType={"error"}
+					pType="error"
 					pShow={showError}
 					pClose={() => handleClosePopup(setShowError, setErrorMessage)}
 					pMessage={errorMessage}
 				/>
 				<Input
-					iDisabled={status === "loading" ? true : false}
-					iLabel={"Email Address"}
+					iDisabled={!!(status === "loading")}
+					iLabel="Email Address"
 					iIcon={<AtSymbolIcon className={DefaultIconStyles} />}
-					iType={"text"}
-					iName={"email"}
-					iPlaceholder={"Your email address..."}
+					iType="text"
+					iName="email"
+					iPlaceholder="Your email address..."
 					iValue={userCredentials.email}
 					handleOnChange={handleInputChange}
 				/>
@@ -132,19 +132,19 @@ export const SignIn = () => {
 					<></>
 				)}
 				<Input
-					iDisabled={status === "loading" ? true : false}
-					iLabel={"Password"}
+					iDisabled={!!(status === "loading")}
+					iLabel="Password"
 					iIcon={<LockClosedIcon className={DefaultIconStyles} />}
-					iType={"password"}
-					iName={"password"}
-					iPlaceholder={"Your password..."}
+					iType="password"
+					iName="password"
+					iPlaceholder="Your password..."
 					iValue={userCredentials.password}
 					handleOnChange={handleInputChange}
 				/>
 				{errors?.password ? (
 					<PopupMessage
-						pStyles={"flex justify-end"}
-						pType={"error"}
+						pStyles="flex justify-end"
+						pType="error"
 						pShow={showErrors}
 						pClose={() => handleClosePopup(setShowErrors, setErrors)}
 						pMessage={errors?.password}
@@ -169,15 +169,13 @@ export const SignIn = () => {
 					</Link>
 				</p>
 				<Button
-					bDisabled={status === "loading" ? true : false}
-					bStyles={
-						"bg-blue-400 hover:bg-blue-500 border-blue-500 hover:border-blue-500"
-					}
-					bType={"submit"}
-					bLabel={"Sign In"}
+					bDisabled={!!(status === "loading")}
+					bStyles="bg-blue-400 hover:bg-blue-500 border-blue-500 hover:border-blue-500"
+					bType="submit"
+					bLabel="Sign In"
 					handleOnClick={handleSignIn}
 				/>
- 				{/* <SocialsAuthentication /> */}
+				{/* <SocialsAuthentication /> */}
 			</div>
 		</form>
 	);
