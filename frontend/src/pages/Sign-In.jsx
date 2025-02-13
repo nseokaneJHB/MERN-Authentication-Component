@@ -177,7 +177,7 @@ export const SignIn = () => {
 					bLabel={"Sign In"}
 					handleOnClick={handleSignIn}
 				/>
-				<SocialsAuthentication />
+ 				{/* <SocialsAuthentication /> */}
 			</div>
 		</form>
 	);
