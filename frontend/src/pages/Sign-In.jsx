@@ -15,7 +15,7 @@ import { handleClosePopup } from "../utils/functionalities";
 // Components
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { SocialsAuthentication } from "../components/Socials-Authentication";
+// import { SocialsAuthentication } from "../components/Socials-Authentication";
 import { PopupMessage } from "../components/PopupMessage";
 
 // API Calls
