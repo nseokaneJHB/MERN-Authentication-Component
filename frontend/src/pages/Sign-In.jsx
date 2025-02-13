@@ -128,9 +128,7 @@ export const SignIn = () => {
 						pClose={() => handleClosePopup(setShowErrors, setErrors)}
 						pMessage={errors?.email}
 					/>
-				) : (
-					<></>
-				)}
+				) : null}
 				<Input
 					iDisabled={!!(status === "loading")}
 					iLabel="Password"
@@ -149,9 +147,7 @@ export const SignIn = () => {
 						pClose={() => handleClosePopup(setShowErrors, setErrors)}
 						pMessage={errors?.password}
 					/>
-				) : (
-					<></>
-				)}
+				) : null}
 				<p className="text-xs text-center text-gray-600 mt-3">
 					Don't have an account?{" "}
 					<Link

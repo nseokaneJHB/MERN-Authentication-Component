@@ -19,7 +19,7 @@ import { handleClosePopup } from "../utils/functionalities";
 // Components
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { SocialsAuthentication } from "../components/Socials-Authentication";
+// import { SocialsAuthentication } from "../components/Socials-Authentication";
 import { PopupMessage } from "../components/PopupMessage";
 
 // API Calls
@@ -69,7 +69,7 @@ export const SignUp = () => {
 					setShowSuccess(false);
 					navigate("/sign-in");
 				}, 3000);
-      }
+			}
 		},
 		onError: async (error) => {
 			const { errors, message } = await error.response.data;
@@ -83,7 +83,7 @@ export const SignUp = () => {
 					setShowError(false);
 				}, 5000);
 			} else {
-        console.log(error);
+				console.log(error);
 				setErrorMessage(error.message);
 				setShowError(true);
 				setTimeout(() => {
@@ -119,115 +119,107 @@ export const SignUp = () => {
 					Sign Up
 				</h1>
 				<PopupMessage
-					pType={"success"}
+					pType="success"
 					pShow={showSuccess}
 					pClose={() => handleClosePopup(setShowSuccess, setSuccessMessage)}
 					pMessage={successMessage}
 				/>
 				<PopupMessage
-					pType={"error"}
+					pType="error"
 					pShow={showError}
 					pClose={() => handleClosePopup(setShowError, setErrorMessage)}
 					pMessage={errorMessage}
 				/>
 				<Input
-					iDisabled={status === "loading" ? true : false}
-					iLabel={"Name"}
+					iDisabled={!!(status === "loading")}
+					iLabel="Name"
 					iIcon={<UserIcon className={DefaultIconStyles} />}
-					iType={"text"}
-					iName={"name"}
-					iPlaceholder={"Your name..."}
+					iType="text"
+					iName="name"
+					iPlaceholder="Your name..."
 					iValue={userCredentials.name}
 					handleOnChange={handleInputChange}
 				/>
 				{errors?.name ? (
 					<PopupMessage
-						pType={"error"}
+						pType="error"
 						pShow={showErrors}
 						pClose={() => handleClosePopup(setShowErrors, setErrors)}
 						pMessage={errors?.name}
 					/>
-				) : (
-					<></>
-				)}
+				) : null}
 				<Input
-					iDisabled={status === "loading" ? true : false}
-					iLabel={"Email Address"}
+					iDisabled={!!(status === "loading")}
+					iLabel="Email Address"
 					iIcon={<AtSymbolIcon className={DefaultIconStyles} />}
-					iType={"text"}
-					iName={"email"}
-					iPlaceholder={"Your email address..."}
+					iType="text"
+					iName="email"
+					iPlaceholder="Your email address..."
 					iValue={userCredentials.email}
 					handleOnChange={handleInputChange}
 				/>
 				{errors?.email ? (
 					<PopupMessage
-						pType={"error"}
+						pType="error"
 						pShow={showErrors}
 						pClose={() => handleClosePopup(setShowErrors, setErrors)}
 						pMessage={errors?.email}
 					/>
-				) : (
-					<></>
-				)}
+				) : null}
 				<Input
-					iDisabled={status === "loading" ? true : false}
-					iLabel={"Password"}
+					iDisabled={!!(status === "loading")}
+					iLabel="Password"
 					iIcon={<LockClosedIcon className={DefaultIconStyles} />}
-					iType={"password"}
-					iName={"password"}
-					iPlaceholder={"Your password..."}
+					iType="password"
+					iName="password"
+					iPlaceholder="Your password..."
 					iValue={userCredentials.password}
 					handleOnChange={handleInputChange}
 				/>
 				{errors?.password ? (
 					<PopupMessage
-						pType={"error"}
+						pType="error"
 						pShow={showErrors}
 						pClose={() => handleClosePopup(setShowErrors, setErrors)}
 						pMessage={errors?.password}
 					/>
-				) : (
-					<></>
-				)}
+				) : null}
 				<Input
-					iDisabled={status === "loading" ? true : false}
-					iLabel={"Confirm Password"}
+					iDisabled={!!(status === "loading")}
+					iLabel="Confirm Password"
 					iIcon={<LockOpenIcon className={DefaultIconStyles} />}
-					iType={"password"}
-					iName={"confirm_password"}
-					iPlaceholder={"Confirm your password..."}
+					iType="password"
+					iName="confirm_password"
+					iPlaceholder="Confirm your password..."
 					iValue={userCredentials.confirm_password}
 					handleOnChange={handleInputChange}
 				/>
 				{errors?.confirm_password ? (
 					<PopupMessage
-						pType={"error"}
+						pType="error"
 						pShow={showErrors}
 						pClose={() => handleClosePopup(setShowErrors, setErrors)}
 						pMessage={errors?.confirm_password}
 					/>
-				) : (
-					<></>
-				)}
+				) : null}
 				<p className="text-xs text-center text-gray-600 mt-3">
 					Already have an account?{" "}
-					<Link className="text-blue-500 hover:opacity-75" to={"/sign-in"}>
+					<Link className="text-blue-500 hover:opacity-75" to="/sign-in" >
 						Sign in
 					</Link>
 				</p>
 				<Button
-					bDisabled={status === "loading" ? true : false}
+					bDisabled={!!(status === "loading")}
 					bStyles={
 						"bg-blue-400 hover:bg-blue-500 border-blue-500 hover:border-blue-500"
 					}
-					bType={"submit"}
-					bLabel={"Sign Up"}
+					bType="submit"
+					bLabel="Sign Up"
 					handleOnClick={handleSignUp}
 				/>
-				<SocialsAuthentication />
+				{/* <SocialsAuthentication /> */}
 			</div>
 			<div className="hidden md:block h-full w-full bg-blue-400 p-4 sm:px-6 lg:px-10"></div>
-		</form>
+		</form >
 	);
 };
